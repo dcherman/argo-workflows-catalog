@@ -14,16 +14,11 @@ jobs:
     - uses: engineerd/setup-kind@v0.4.0
       with:
         version: v0.8.1
+        config: hack/kind-config.yaml
     - name: Run tests
       run: |
         kubectl create ns argo
         kubectl apply -n argo -f https://raw.githubusercontent.com/argoproj/argo/v2.9.4/manifests/quick-start-minimal.yaml
-
-        # Swap the executor to PNS since Kind doesn't have the docker.sock available to it by default it seems
-        kubectl patch configmap/workflow-controller-configmap \
-          -n argo \
-          --type merge \
-          -p '{"data":{"containerRuntimeExecutor":"pns"}}'
 
         curl -sLO https://github.com/argoproj/argo/releases/download/v2.9.4/argo-linux-amd64
         chmod +x argo-linux-amd64
